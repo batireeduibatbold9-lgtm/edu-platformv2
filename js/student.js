@@ -138,11 +138,45 @@ async function results(profile){
   setContent(`<div class="list">${(data||[]).map(a=>`<div class="list-item"><div class="row space"><div><h3>${escapeHtml(a.exams?.title||"Exam")}</h3><div class="muted">${escapeHtml(a.exams?.subjects?.name||"")}</div></div><b>${a.score??0}%</b></div><div class="muted">${a.status} · ${formatDate(a.submitted_at)}</div></div>`).join("")||"<div class='empty'>No results yet.</div>"}</div>`);
 }
 
-async function leaderboard(profile){
-  setTitle("Leaderboard","Your class exam rankings");
-  const {data,error}=await sb.from("leaderboard").select("*").order("score",{ascending:false}).limit(100);
-  if(error)return toast(error.message);
-  setContent(`<div class="card"><h2>🏆 Leaderboard</h2>${(data||[]).map((r,i)=>`<div class="leaderboard-row"><b>#${i+1}</b><span>${escapeHtml(r.full_name||"Student")}<br><small class="muted">${escapeHtml(r.exam_title||"")}</small></span><b>${r.score}%</b></div>`).join("")||"<div class='empty'>No scores yet.</div>"}</div>`);
+async function results(profile){
+  setTitle("My Results","Your exam history");
+
+  const {data,error}=await sb
+    .from("exam_attempts")
+    .select("*, exams(title,subjects(name))")
+    .eq("student_id",profile.id)
+    .order("submitted_at",{ascending:false});
+
+  if(error){
+    return toast(error.message);
+  }
+
+  setContent(`
+    <div class="list">
+      ${(data||[]).map(a=>`
+        <div class="list-item">
+          <div class="row space">
+            <div>
+              <h3>${escapeHtml(a.exams?.title||"Exam")}</h3>
+              <div class="muted">
+                ${escapeHtml(a.exams?.subjects?.name||"")}
+              </div>
+            </div>
+
+            <b>${a.score ?? 0}%</b>
+          </div>
+
+          <div class="muted">
+            ${a.status} · ${a.submitted_at ? formatDate(a.submitted_at) : "-"}
+          </div>
+        </div>
+      `).join("") || `
+        <div class="empty">
+          No results yet.
+        </div>
+      `}
+    </div>
+  `);
 }
 
 async function notifications(profile){
