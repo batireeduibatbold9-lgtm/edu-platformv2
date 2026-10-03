@@ -133,13 +133,6 @@ async function takeExam(attemptId,examId,profile){
 
 async function results(profile){
   setTitle("My Results","Your exam history");
-  const {data,error}=await sb.from("exam_attempts").select("*, exams(title,subjects(name))").eq("student_id",profile.id).order("created_at",{ascending:false});
-  if(error)return toast(error.message);
-  setContent(`<div class="list">${(data||[]).map(a=>`<div class="list-item"><div class="row space"><div><h3>${escapeHtml(a.exams?.title||"Exam")}</h3><div class="muted">${escapeHtml(a.exams?.subjects?.name||"")}</div></div><b>${a.score??0}%</b></div><div class="muted">${a.status} · ${formatDate(a.submitted_at)}</div></div>`).join("")||"<div class='empty'>No results yet.</div>"}</div>`);
-}
-
-async function results(profile){
-  setTitle("My Results","Your exam history");
 
   const {data,error}=await sb
     .from("exam_attempts")
