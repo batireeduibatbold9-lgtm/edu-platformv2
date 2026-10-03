@@ -5,7 +5,7 @@ if (SUPABASE_URL.startsWith("YOUR_") || SUPABASE_ANON_KEY.startsWith("YOUR_")) {
 }
 
 export const sb = window.supabase.createClient(
-  https://cfscrmcmyrbcuwmscyeo.supabase.co,
-  sb_publishable_oO1yzy3LYsj5TkgfVGNcFQ_OuC9TpNW,
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
   { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
 );
